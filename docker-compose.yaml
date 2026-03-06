@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  next-frontend:
+    # Use Node 20 for the Next.js frontend
+    image: node:22-alpine
+    working_dir: /app
+    # Mount the local directory so we can edit Next.js code live
+    volumes:
+      - .:/app
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    command: npm run dev
+    environment:
+      # The DNS alias we defined where Next.js will look for the Python service
+      - INTERNAL_API_URL=http://python-backend:8000
+    depends_on:
+      - python-backend
+    networks:
+      - word-scale-net
+
+  python-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # NOTE: We DO NOT expose "8000:8000" ports here!
+    # This enforces the strict isolation rule: the python backend is ONLY 
+    # reachable by the Nextjs container via the bridge network.
+    networks:
+      - word-scale-net
+
+networks:
+  word-scale-net:
+    driver: bridge
