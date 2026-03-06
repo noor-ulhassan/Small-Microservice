@@ -57,7 +57,10 @@ async def process_word_count(payload: TextPayload):
     if not raw_text:
         return {"count": 0, "engine": "Python-Resilient-Core"}
     
-    words = raw_text.split()
+    import re
+    
+    # Use regex to find all alphanumeric words, ignoring punctuation
+    words = re.findall(r'\b\w+\b', raw_text)
     count = len(words)
     
     logger.info(f"Successfully calculated {count} words.")

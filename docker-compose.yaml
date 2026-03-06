@@ -24,9 +24,10 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    # NOTE: We DO NOT expose "8000:8000" ports here!
-    # This enforces the strict isolation rule: the python backend is ONLY 
-    # reachable by the Nextjs container via the bridge network.
+    # Exposing the port to localhost so you can run 'npm run dev' on your Windows machine
+    # while only running Python inside Docker.
+    ports:
+      - "8000:8000"
     networks:
       - word-scale-net
 
